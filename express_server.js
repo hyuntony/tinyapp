@@ -50,7 +50,13 @@ app.get('/hello', (req, res) => {
 
 app.post('/urls', (req, res) => {
   console.log(req.body);
-  res.send("OK");
+  const shortStr = generateRandomString();
+  urlDatabase[shortStr] = req.body.longURL;
+  res.redirect(`/urls/${shortStr}`);
+});
+
+app.get('/u/:shortURL', (req, res) => {
+  res.redirect(urlDatabase[req.params.shortURL]);
 });
 
 app.listen(PORT, () => {
