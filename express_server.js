@@ -1,6 +1,5 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
-const e = require('express');
 const app = express();
 const PORT = 8080;
 
@@ -144,7 +143,13 @@ app.post('/logout', (req, res) => {
 
 //register template
 app.get('/register', (req, res) => {
-  res.render('urls_register');
+  let user;
+  if (req.cookies.user_id) {
+    const cookie = req.cookies.user_id;
+    user = users[cookie].email;
+  }
+  const templateVars = {user};
+  res.render('urls_register', templateVars);
 });
 
 //register button
@@ -168,7 +173,13 @@ app.post('/register', (req, res) => {
 
 //login template
 app.get('/login', (req, res) => {
-  res.render('urls_login');
+  let user;
+  if (req.cookies.user_id) {
+    const cookie = req.cookies.user_id;
+    user = users[cookie].email;
+  }
+  const templateVars = {user};
+  res.render('urls_login', templateVars);
 });
 
 app.listen(PORT, () => {
