@@ -97,6 +97,12 @@ app.get('/urls/:shortURL', (req, res) => {
     const cookie = req.session.user_id;
     user = users[cookie].email;
   }
+  if (!urlDatabase[req.params.shortURL]) {
+    res.send("This URL does not exist");
+  }
+  if (!user) {
+    res.send("You are not logged in");
+  }
   const urlObj = urlsForUser(req.session.user_id);
   if (!urlObj[req.params.shortURL]) {
     res.send("This URL does not belong to you");
