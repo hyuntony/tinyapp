@@ -54,9 +54,12 @@ const users = {
     password: "dishwasher-funk"
   }
 };
-
+//Root page redirects
 app.get('/', (req, res) => {
-  res.send("Hello");
+  if (req.cookies.user_id) {
+    return res.redirect('/urls');
+  }
+  return res.redirect('/login');
 });
 
 //Main page /urls template
