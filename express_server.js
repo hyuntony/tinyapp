@@ -1,5 +1,6 @@
 const express = require('express');
 const cookieSession = require('cookie-session');
+const {lookUp} = require('./helpers/helperfunc');
 const app = express();
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
@@ -25,17 +26,6 @@ const generateRandomString = function() {
     result += randomChars.charAt(Math.floor(Math.random() * randomChars.length));
   }
   return result;
-};
-
-// look up the key of user object through values of email or password
-// (first param = "email" or "password") (second param = value of email or password)
-const lookUp = function(type,email) {
-  for (let key in users) {
-    if (users[key][type] === email) {
-      return key;
-    }
-  }
-  return false;
 };
 
 // creates a new urls object that belonging to specific user
@@ -165,16 +155,16 @@ app.post('/urls/:shortURL/edit', (req, res) => {
 //login button
 app.post('/login', (req, res) => {
   const loginAttempt = req.body;
-  const hashedPassword = users[lookUp("email", loginAttempt.email)].password;
-  if (!lookUp("email", loginAttempt.email)) {
+  const userId = lookUp("email", loginAttempt.email, users);
+  const hashedPassword = users[userId].password;
+  if (!userId) {
     res.sendStatus(403);
   }
-  if (lookUp('email', loginAttempt.email)) {
+  if (userId) {
     if (!bcrypt.compareSync(loginAttempt.password, hashedPassword)) {
       res.sendStatus(403);
     } else if (bcrypt.compareSync(loginAttempt.password, hashedPassword)) {
-      req.session['user_id'] = lookUp('email', loginAttempt.email);
-      // res.cookie('user_id', lookUp('email', loginAttempt.email));
+      req.session['user_id'] = userId;
       return res.redirect('/urls');
     }
   }
@@ -205,7 +195,7 @@ app.post('/register', (req, res) => {
   if (newUser.email === "" | newUser.password === "") {
     res.sendStatus(400);
   }
-  if (lookUp("email", newUser.email)) {
+  if (lookUp("email", newUser.email, users)) {
     res.sendStatus(400);
   }
   users[randomId] = {
@@ -214,7 +204,6 @@ app.post('/register', (req, res) => {
     password: bcrypt.hashSync(newUser.password, saltRounds)
   };
   req.session['user_id'] = randomId;
-  // res.cookie('user_id', randomId);
   return res.redirect('/urls');
 });
 
