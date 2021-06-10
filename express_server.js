@@ -1,12 +1,16 @@
 const express = require('express');
-const cookieParser = require('cookie-parser');
+const cookieSession = require('cookie-session');
 const app = express();
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const PORT = 8080;
 
 
-app.use(cookieParser());
+app.use(cookieSession({
+  name: 'session',
+  keys: 'secret',
+  maxAge: 24 * 60 * 60 * 1000
+}));
 app.use(express.urlencoded({extended: true}));
 
 app.set('view engine', 'ejs');
