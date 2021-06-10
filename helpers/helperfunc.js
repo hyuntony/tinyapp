@@ -7,7 +7,6 @@ const lookUp = function(type, searchValue, database) {
       return key;
     }
   }
-  return false;
 };
 
 module.exports = { lookUp };
