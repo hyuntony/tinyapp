@@ -11,6 +11,9 @@ app.use(express.urlencoded({extended: true}));
 
 app.set('view engine', 'ejs');
 
+//Helper Functions
+
+//generate random 6digit string
 const generateRandomString = function() {
   const randomChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
@@ -20,6 +23,8 @@ const generateRandomString = function() {
   return result;
 };
 
+// look up the key of user object through values of email or password
+// (first param = "email" or "password") (second param = value of email or password)
 const lookUp = function(type,email) {
   for (let key in users) {
     if (users[key][type] === email) {
@@ -29,6 +34,7 @@ const lookUp = function(type,email) {
   return false;
 };
 
+// creates a new urls object that belonging to specific user
 const urlsForUser = function(id) {
   const finalObj = {};
   for (let key in urlDatabase) {
