@@ -24,17 +24,17 @@
         </tr>
       </thead>
       <tbody>
-        <% if (Object.keys(urls).length === 0) { %>
+        <% if (user === undefined) { %>
           <tr>
             <td style="color: brown; font-size: 2em;">Log in or Register First</td>
           </tr>
           <% } else { %>
         <% for(let url in urls) { %>
           <tr>
-            <td><%= url %></td>
+            <td>localhost:8080/u/<%= url %></td>
             <td><%= urls[url].longURL %></td>
             <td>
-              <form method="POST" action="/urls/<%= url %>">
+              <form method="GET" action="/urls/<%= url %>">
                 <button type="submit" class="btn btn-outline-primary">Edit</button>
               </form>
             </td>
@@ -49,7 +49,9 @@
         
       </tbody>
     </table>
-    <button href="#">create a new shorturl</button>
+    <form method="GET" action="/urls/new">
+      <button href="#">create a new shorturl</button>
+    </form>
   </main>
   <!-- Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

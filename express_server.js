@@ -73,7 +73,6 @@ app.get('/urls', (req, res) => {
     user = users[cookie].email;
   }
   const urlObj = urlsForUser(req.session.user_id);
-  console.log(req.session.user_id);
   const templateVars = {urls: urlObj, user};
   res.render("urls_index", templateVars);
 });
@@ -126,6 +125,7 @@ app.post('/urls', (req, res) => {
   return res.redirect(`/urls/${shortStr}`);
 });
 
+// /u/shorturl redirect to longurl
 app.get('/u/:shortURL', (req, res) => {
   return res.redirect(urlDatabase[req.params.shortURL].longURL);
 });
@@ -140,10 +140,6 @@ app.post('/urls/:id/delete', (req, res) => {
 });
 
 //edit button
-app.post('/urls/:id', (req, res) => {
-  return res.redirect(`/urls/${req.params.id}`);
-});
-
 app.post('/urls/:shortURL/edit', (req, res) => {
   const urlObj = urlsForUser(req.session.user_id);
   if (urlObj[req.params.shortURL]) {
@@ -184,7 +180,6 @@ app.get('/register', (req, res) => {
     user = users[cookie].email;
   }
   const templateVars = {user};
-  console.log(users);
   return res.render('urls_register', templateVars);
 });
 
