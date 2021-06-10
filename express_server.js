@@ -1,7 +1,10 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const app = express();
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 const PORT = 8080;
+
 
 app.use(cookieParser());
 app.use(express.urlencoded({extended: true}));
@@ -46,12 +49,14 @@ const users = {
   "userRandomID": {
     id: "userRandomID",
     email: "user@example.com",
-    password: "purple-monkey-dinosaur"
+    password: bcrypt.hashSync("purple-monkey-dinosaur", saltRounds)
+    // "purple-monkey-dinosaur"
   },
   "user2RandomID": {
     id: "user2RandomID",
     email: "user2@example.com",
-    password: "dishwasher-funk"
+    password: bcrypt.hashSync("dishwasher-funk", saltRounds)
+    // "dishwasher-funk"
   }
 };
 //Root page redirects
