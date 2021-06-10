@@ -56,13 +56,11 @@ const users = {
     id: "userRandomID",
     email: "user@example.com",
     password: bcrypt.hashSync("purple-monkey-dinosaur", saltRounds)
-    // "purple-monkey-dinosaur"
   },
   "user2RandomID": {
     id: "user2RandomID",
     email: "user2@example.com",
     password: bcrypt.hashSync("dishwasher-funk", saltRounds)
-    // "dishwasher-funk"
   }
 };
 //Root page redirects
@@ -161,17 +159,17 @@ app.post('/urls/:shortURL/edit', (req, res) => {
   return res.redirect('/urls');
 });
 
-//login page
+//login button
 app.post('/login', (req, res) => {
   const loginAttempt = req.body;
+  const hashedPassword = users[lookUp("email", loginAttempt.email)].password;
   if (!lookUp("email", loginAttempt.email)) {
-    console.log("hello");
     res.sendStatus(403);
   }
   if (lookUp('email', loginAttempt.email)) {
-    if (!lookUp("password", loginAttempt.password)) {
+    if (!bcrypt.compareSync(loginAttempt.password, hashedPassword)) {
       res.sendStatus(403);
-    } else if (lookUp('password', loginAttempt.password)) {
+    } else if (bcrypt.compareSync(loginAttempt.password, hashedPassword)) {
       res.cookie('user_id', lookUp('email', loginAttempt.email));
       return res.redirect('/urls');
     }
@@ -192,13 +190,14 @@ app.get('/register', (req, res) => {
     user = users[cookie].email;
   }
   const templateVars = {user};
+  console.log(users);
   return res.render('urls_register', templateVars);
 });
 
 //register button
 app.post('/register', (req, res) => {
-  const randomId = generateRandomString();
   const newUser = req.body;
+  const randomId = generateRandomString();
   if (newUser.email === "" | newUser.password === "") {
     res.sendStatus(400);
   }
@@ -208,7 +207,7 @@ app.post('/register', (req, res) => {
   users[randomId] = {
     id: randomId,
     email: newUser.email,
-    password: newUser.password
+    password: bcrypt.hashSync(newUser.password, saltRounds)
   };
   res.cookie('user_id', randomId);
   return res.redirect('/urls');
