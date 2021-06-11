@@ -1,6 +1,6 @@
 const express = require('express');
 const cookieSession = require('cookie-session');
-const {lookUp, generateRandomString, urlsForUser} = require('./helpers/helperfunc');
+const { lookUp, generateRandomString, urlsForUser } = require('./helpers/helperfunc');
 const app = express();
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
