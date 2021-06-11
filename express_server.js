@@ -110,9 +110,9 @@ app.get('/urls/:shortURL', (req, res) => {
   const templateVars = {
     user,
     shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL].longURL};
+    longURL: urlDatabase[req.params.shortURL].longURL
+  };
   return res.render("urls_show", templateVars);
-
 });
 
 //login template
@@ -196,13 +196,13 @@ app.post('/urls/:shortURL', (req, res) => {
 app.post('/login', (req, res) => {
   const loginAttempt = req.body;
   const userId = lookUp("email", loginAttempt.email, users);
-  const hashedPassword = users[userId].password;
   if (!userId) {
-    res.sendStatus(403);
+    return res.status(403).send('Username/email does not exist');
   }
+  const hashedPassword = users[userId].password;
   if (userId) {
     if (!bcrypt.compareSync(loginAttempt.password, hashedPassword)) {
-      res.sendStatus(403);
+      res.status(403).send('Wrong password');
     } else if (bcrypt.compareSync(loginAttempt.password, hashedPassword)) {
       req.session['user_id'] = userId;
       return res.redirect('/urls');
