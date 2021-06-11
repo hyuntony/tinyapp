@@ -222,10 +222,10 @@ app.post('/register', (req, res) => {
   const newUser = req.body;
   const randomId = generateRandomString();
   if (newUser.email === "" | newUser.password === "") {
-    res.sendStatus(400);
+    return res.status(400).send("Email or password is entered empty");
   }
   if (lookUp("email", newUser.email, users)) {
-    res.sendStatus(400);
+    return res.status(400).send("Email already exists");
   }
   users[randomId] = {
     id: randomId,
