@@ -1,6 +1,6 @@
 const express = require('express');
 const cookieSession = require('cookie-session');
-const {lookUp} = require('./helpers/helperfunc');
+const {lookUp, generateRandomString, urlsForUser} = require('./helpers/helperfunc');
 const app = express();
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
@@ -12,33 +12,12 @@ app.use(cookieSession({
   keys: ['key1', 'key2'],
   maxAge: 24 * 60 * 60 * 1000
 }));
+
 app.use(express.urlencoded({extended: true}));
 
 app.set('view engine', 'ejs');
 
-//Helper Functions
-
-//generate random 6digit string
-const generateRandomString = function() {
-  const randomChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-  for (let i = 0; i < 6; i++) {
-    result += randomChars.charAt(Math.floor(Math.random() * randomChars.length));
-  }
-  return result;
-};
-
-// creates a new urls object that belonging to specific user
-const urlsForUser = function(id) {
-  const finalObj = {};
-  for (let key in urlDatabase) {
-    if (urlDatabase[key].userID === id) {
-      finalObj[key] = {longURL: urlDatabase[key].longURL, userID: id};
-    }
-  }
-  return finalObj;
-};
-
+//DATABASE OBJECTS
 
 const urlDatabase = {
   "b2xVn2": { longURL:"http://www.lighthouselabs.ca", userID: "userRandomID" },
@@ -57,6 +36,9 @@ const users = {
     password: bcrypt.hashSync("dishwasher-funk", saltRounds)
   }
 };
+
+//REDIRECTS
+
 //Root page redirects
 app.get('/', (req, res) => {
   if (req.session.user_id) {
@@ -65,6 +47,16 @@ app.get('/', (req, res) => {
   return res.redirect('/login');
 });
 
+// /u/shorturl redirect to longurl
+app.get('/u/:shortURL', (req, res) => {
+  if (!urlDatabase[req.params.shortURL]) {
+    return res.send("This Url does not exist");
+  }
+  return res.redirect(urlDatabase[req.params.shortURL].longURL);
+});
+
+//GET render
+
 //Main page /urls template
 app.get('/urls', (req, res) => {
   let user;
@@ -72,7 +64,7 @@ app.get('/urls', (req, res) => {
     const cookie = req.session.user_id;
     user = users[cookie].email;
   }
-  const urlObj = urlsForUser(req.session.user_id);
+  const urlObj = urlsForUser(req.session.user_id, urlDatabase);
   const templateVars = {urls: urlObj, user};
   res.render("urls_index", templateVars);
 });
@@ -91,6 +83,7 @@ app.get('/urls/new', (req, res) => {
   return res.render('urls_new', templateVars);
 });
 
+//shortURL template
 app.get('/urls/:shortURL', (req, res) => {
   let user;
   if (req.session.user_id) {
@@ -103,7 +96,7 @@ app.get('/urls/:shortURL', (req, res) => {
   if (!user) {
     return res.send("You are not logged in");
   }
-  const urlObj = urlsForUser(req.session.user_id);
+  const urlObj = urlsForUser(req.session.user_id, urlDatabase);
   if (!urlObj[req.params.shortURL]) {
     return res.send("This URL does not belong to you");
   }
@@ -137,13 +130,7 @@ app.get('/register', (req, res) => {
   return res.render('urls_register', templateVars);
 });
 
-app.get('/urls.json', (req, res) => {
-  res.json(urlDatabase);
-});
-
-app.get('/hello', (req, res) => {
-  return res.send("<html><body>Hello <b>World</b></body></html>\n");
-});
+// POST REQUESTS
 
 //creating new shortURLs
 app.post('/urls', (req, res) => {
@@ -156,25 +143,17 @@ app.post('/urls', (req, res) => {
   return res.redirect(`/urls/${shortStr}`);
 });
 
-// /u/shorturl redirect to longurl
-app.get('/u/:shortURL', (req, res) => {
-  if (!urlDatabase[req.params.shortURL]) {
-    return res.send("This Url does not exist");
-  }
-  return res.redirect(urlDatabase[req.params.shortURL].longURL);
-});
-
 //delete url
 app.post('/urls/:id/delete', (req, res) => {
   const userID = req.session.user_id;
-  const shortUrl = req.params.shortURL;
+  const shortUrl = req.params.id;
   if (!userID) {
     return res.send('You are not logged in');
   }
   if (urlDatabase[shortUrl].userID !== userID) {
     return res.send('This Url does not belong to you');
   }
-  delete urlDatabase[req.params.id];
+  delete urlDatabase[shortUrl];
   return res.redirect('/urls');
 });
 
