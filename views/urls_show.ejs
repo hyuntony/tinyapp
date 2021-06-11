@@ -17,7 +17,7 @@
         <p class="card-text">Short URL: <a href="/u/<%= shortURL %>">localhost:8080/u/<%= shortURL %></a></p>
         <tr><th><label>Edit</label></th></tr>
         <tr>
-          <form method="POST" action="/urls/<%= shortURL %>/edit">
+          <form method="POST" action="/urls/<%= shortURL %>">
             <td><label>New URL:</label></td>
             <td>
               <input type="text" name="longURL" value="<%= longURL %>">
