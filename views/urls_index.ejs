@@ -26,7 +26,7 @@
       <tbody>
         <% for(let url in urls) { %>
           <tr>
-            <td>localhost:8080/u/<%= url %></td>
+            <td><%= url %></td>
             <td><%= urls[url].longURL %></td>
             <td>
               <form method="GET" action="/urls/<%= url %>">
