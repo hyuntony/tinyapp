@@ -24,7 +24,7 @@ const urlsForUser = function(id, database) {
   const finalObj = {};
   for (let key in database) {
     if (database[key].userID === id) {
-      finalObj[key] = {longURL: database[key].longURL, userID: id};
+      finalObj[key] = { longURL: database[key].longURL, userID: id };
     }
   }
   return finalObj;
