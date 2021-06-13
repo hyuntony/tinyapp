@@ -146,9 +146,9 @@ app.post('/urls', (req, res) => {
 });
 
 //delete url
-app.post('/urls/:id/delete', (req, res) => {
+app.post('/urls/:shortURL/delete', (req, res) => {
   const userID = req.session.user_id;
-  const shortUrl = req.params.id;
+  const shortUrl = req.params.shortURL;
   if (!userID) {
     return res.send('You are not logged in');
   }
