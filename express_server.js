@@ -60,7 +60,9 @@ app.get('/u/:shortURL', (req, res) => {
 //Main page /urls template
 app.get('/urls', (req, res) => {
   let user;
-  if (req.session.user_id) {
+  if (!req.session.user_id) {
+    return res.send("Log in or Register First");
+  } else if (req.session.user_id) {
     const cookie = req.session.user_id;
     user = users[cookie].email;
   }

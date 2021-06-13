@@ -24,11 +24,6 @@
         </tr>
       </thead>
       <tbody>
-        <% if (user === undefined) { %>
-          <tr>
-            <td style="color: brown; font-size: 2em;">Log in or Register First</td>
-          </tr>
-          <% } else { %>
         <% for(let url in urls) { %>
           <tr>
             <td>localhost:8080/u/<%= url %></td>
@@ -45,7 +40,6 @@
             </td>
           </tr>
         <% } %>
-      <% } %>
         
       </tbody>
     </table>
