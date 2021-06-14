@@ -86,6 +86,9 @@ app.get('/urls/:shortURL', (req, res) => {
   let user;
   const cookie = req.session.user_id;
   const shortUrl = req.params.shortURL;
+  if (req.session.user_id) {
+    user = users[cookie].email;
+  }
   if (!user) {
     return res.send("You are not logged in");
   }
@@ -95,9 +98,6 @@ app.get('/urls/:shortURL', (req, res) => {
   const urlObj = urlsForUser(cookie, urlDatabase);
   if (!urlObj[shortUrl]) {
     return res.send("This URL does not belong to you");
-  }
-  if (req.session.user_id) {
-    user = users[cookie].email;
   }
   const templateVars = {
     user,
@@ -119,7 +119,6 @@ app.get('/login', (req, res) => {
 
 app.get('/register', (req, res) => {
   const userID = req.session.user_id;
-  console.log(userID);
   if (userID) {
     return res.redirect('/urls');
   }
