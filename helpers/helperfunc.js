@@ -2,9 +2,11 @@
 const generateRandomString = function() {
   const randomChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
+  
   for (let i = 0; i < 6; i++) {
     result += randomChars.charAt(Math.floor(Math.random() * randomChars.length));
   }
+
   return result;
 };
 
@@ -22,11 +24,13 @@ const lookUp = function(type, searchValue, database) {
 // creates a new urls object that belonging to specific user
 const urlsForUser = function(id, database) {
   const finalObj = {};
+
   for (const key in database) {
     if (database[key].userID === id) {
       finalObj[key] = { longURL: database[key].longURL, userID: id };
     }
   }
+  
   return finalObj;
 };
 
