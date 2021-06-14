@@ -12,7 +12,7 @@ const generateRandomString = function() {
 // first param = "email" or "password"|| second param = value of email or password
 // third param = the database object
 const lookUp = function(type, searchValue, database) {
-  for (let key in database) {
+  for (const key in database) {
     if (database[key][type] === searchValue) {
       return key;
     }
@@ -22,7 +22,7 @@ const lookUp = function(type, searchValue, database) {
 // creates a new urls object that belonging to specific user
 const urlsForUser = function(id, database) {
   const finalObj = {};
-  for (let key in database) {
+  for (const key in database) {
     if (database[key].userID === id) {
       finalObj[key] = { longURL: database[key].longURL, userID: id };
     }

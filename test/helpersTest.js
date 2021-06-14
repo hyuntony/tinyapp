@@ -21,7 +21,7 @@ describe('getUserByEmail', function() {
     const expectedOutput = "userRandomID";
     assert.strictEqual(user, expectedOutput);
   });
-  it('should return undefined', () => {
+  it('should return undefined with invalid email', () => {
     const user = lookUp("email", "hellothere@example.com", testUsers);
     const expectedOutput = undefined;
     assert.strictEqual(user, expectedOutput);
