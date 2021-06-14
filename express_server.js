@@ -1,6 +1,7 @@
 const express = require('express');
 const cookieSession = require('cookie-session');
 const { lookUp, generateRandomString, urlsForUser } = require('./helpers/helperfunc');
+
 const app = express();
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
@@ -39,7 +40,6 @@ const users = {
 
 //REDIRECTS
 
-//Root page redirects
 app.get('/', (req, res) => {
   if (req.session.user_id) {
     return res.redirect('/urls');
@@ -47,7 +47,6 @@ app.get('/', (req, res) => {
   return res.redirect('/login');
 });
 
-// /u/shorturl redirect to longurl
 app.get('/u/:shortURL', (req, res) => {
   if (!urlDatabase[req.params.shortURL]) {
     return res.send("This Url does not exist");
@@ -55,9 +54,8 @@ app.get('/u/:shortURL', (req, res) => {
   return res.redirect(urlDatabase[req.params.shortURL].longURL);
 });
 
-//GET render
+//GET renders
 
-//Main page /urls template
 app.get('/urls', (req, res) => {
   let user;
   if (!req.session.user_id) {
@@ -71,7 +69,6 @@ app.get('/urls', (req, res) => {
   res.render("urls_index", templateVars);
 });
 
-// /urls/new template
 app.get('/urls/new', (req, res) => {
   let user;
   if (!req.session.user_id) {
@@ -85,7 +82,6 @@ app.get('/urls/new', (req, res) => {
   return res.render('urls_new', templateVars);
 });
 
-//shortURL template
 app.get('/urls/:shortURL', (req, res) => {
   let user;
   const cookie = req.session.user_id;
@@ -111,7 +107,6 @@ app.get('/urls/:shortURL', (req, res) => {
   return res.render("urls_show", templateVars);
 });
 
-//login template
 app.get('/login', (req, res) => {
   const userID = req.session.user_id;
   if (userID) {
@@ -122,7 +117,6 @@ app.get('/login', (req, res) => {
   return res.render('urls_login', templateVars);
 });
 
-//register template
 app.get('/register', (req, res) => {
   const userID = req.session.user_id;
   console.log(userID);
@@ -136,7 +130,6 @@ app.get('/register', (req, res) => {
 
 // POST REQUESTS
 
-//creating new shortURLs
 app.post('/urls', (req, res) => {
   const cookie = req.session;
   if (!cookie.user_id) {
@@ -147,7 +140,6 @@ app.post('/urls', (req, res) => {
   return res.redirect(`/urls/${shortStr}`);
 });
 
-//delete url
 app.post('/urls/:shortURL/delete', (req, res) => {
   const userID = req.session.user_id;
   const shortUrl = req.params.shortURL;
@@ -161,7 +153,6 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   return res.redirect('/urls');
 });
 
-//update button
 app.post('/urls/:shortURL', (req, res) => {
   const userID = req.session.user_id;
   const shortUrl = req.params.shortURL;
@@ -175,7 +166,6 @@ app.post('/urls/:shortURL', (req, res) => {
   return res.redirect('/urls');
 });
 
-//login button
 app.post('/login', (req, res) => {
   const loginAttempt = req.body;
   const userId = lookUp("email", loginAttempt.email, users);
@@ -193,14 +183,12 @@ app.post('/login', (req, res) => {
   }
 });
 
-//logout button
 app.post('/logout', (req, res) => {
   req.session['user_id'] = null;
   return res.redirect('/urls');
 });
 
 
-//register button
 app.post('/register', (req, res) => {
   const newUser = req.body;
   const randomId = generateRandomString();
